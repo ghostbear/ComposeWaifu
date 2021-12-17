@@ -1,4 +1,4 @@
-package me.ghostbear.composewaifu.data.model
+package me.ghostbear.composewaifu.remote.model
 
 import kotlinx.serialization.Serializable
 

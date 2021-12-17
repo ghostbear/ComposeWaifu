@@ -1,9 +1,9 @@
-package me.ghostbear.composewaifu.data
+package me.ghostbear.composewaifu.remote
 
-import me.ghostbear.composewaifu.data.model.WaifuCategory
-import me.ghostbear.composewaifu.data.model.WaifuCollection
-import me.ghostbear.composewaifu.data.model.Waifu
-import me.ghostbear.composewaifu.data.model.WaifuType
+import me.ghostbear.composewaifu.remote.model.WaifuCategory
+import me.ghostbear.composewaifu.remote.model.WaifuCollection
+import me.ghostbear.composewaifu.remote.model.Waifu
+import me.ghostbear.composewaifu.remote.model.WaifuType
 
 interface WaifuApi {
 

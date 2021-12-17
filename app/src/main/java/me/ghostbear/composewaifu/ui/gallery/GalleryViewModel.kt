@@ -9,15 +9,21 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import me.ghostbear.composewaifu.data.WaifuApi
-import me.ghostbear.composewaifu.data.model.WaifuCategory
-import me.ghostbear.composewaifu.data.model.WaifuCollection
-import me.ghostbear.composewaifu.data.model.WaifuType
+import me.ghostbear.composewaifu.local.MainDatabase
+import me.ghostbear.composewaifu.local.dao.FavoriteDao
+import me.ghostbear.composewaifu.local.model.Waifu
+import me.ghostbear.composewaifu.remote.WaifuApi
+import me.ghostbear.composewaifu.remote.model.WaifuCategory
+import me.ghostbear.composewaifu.remote.model.WaifuCollection
+import me.ghostbear.composewaifu.remote.model.WaifuType
 
 @HiltViewModel
 class GalleryViewModel @Inject constructor(
-    private val api: WaifuApi
+    private val api: WaifuApi,
+    database: MainDatabase
 ) : ViewModel() {
+
+    val favoriteDao: FavoriteDao = database.favoriteDao()
 
     var selectedType: WaifuType by mutableStateOf(WaifuType.SFW)
     var selectedCategory: WaifuCategory by mutableStateOf(WaifuCategory.WAIFU)
@@ -27,6 +33,15 @@ class GalleryViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             waifuCollection = api.getImages(selectedType, selectedCategory)
         }
+    }
+
+    fun addToFavorite(url: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            favoriteDao.insert(
+                Waifu(url = url)
+            )
+        }
+
     }
 
 }

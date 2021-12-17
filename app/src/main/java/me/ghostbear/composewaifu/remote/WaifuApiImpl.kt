@@ -1,4 +1,4 @@
-package me.ghostbear.composewaifu.data
+package me.ghostbear.composewaifu.remote
 
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -8,10 +8,10 @@ import io.ktor.http.contentType
 import javax.inject.Inject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.putJsonArray
-import me.ghostbear.composewaifu.data.model.WaifuCategory
-import me.ghostbear.composewaifu.data.model.WaifuCollection
-import me.ghostbear.composewaifu.data.model.Waifu
-import me.ghostbear.composewaifu.data.model.WaifuType
+import me.ghostbear.composewaifu.remote.model.WaifuCategory
+import me.ghostbear.composewaifu.remote.model.WaifuCollection
+import me.ghostbear.composewaifu.remote.model.Waifu
+import me.ghostbear.composewaifu.remote.model.WaifuType
 
 class WaifuApiImpl @Inject constructor(
     private val httpClient: HttpClient

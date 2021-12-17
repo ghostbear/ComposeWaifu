@@ -4,8 +4,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import me.ghostbear.composewaifu.data.WaifuApi
-import me.ghostbear.composewaifu.data.WaifuApiImpl
+import me.ghostbear.composewaifu.remote.WaifuApi
+import me.ghostbear.composewaifu.remote.WaifuApiImpl
 
 @Module
 @InstallIn(SingletonComponent::class)

@@ -21,7 +21,7 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import coil.size.OriginalSize
-import me.ghostbear.composewaifu.data.model.WaifuType
+import me.ghostbear.composewaifu.remote.model.WaifuType
 import me.ghostbear.composewaifu.ui.components.Chips
 
 @OptIn(ExperimentalCoilApi::class)
@@ -93,11 +93,14 @@ fun GalleryScreen(vm: GalleryViewModel) {
                 Image(
                     painter = painter,
                     contentDescription = null,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            vm.addToFavorite(url)
+                        },
                     contentScale = ContentScale.Crop,
                 )
             }
-
         }
     }
 }

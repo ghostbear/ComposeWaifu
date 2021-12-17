@@ -10,8 +10,10 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -22,6 +24,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import me.ghostbear.composewaifu.R
+import me.ghostbear.composewaifu.ui.favorites.FavoriteScreen
+import me.ghostbear.composewaifu.ui.favorites.FavoriteViewModel
 import me.ghostbear.composewaifu.ui.gallery.GalleryScreen
 import me.ghostbear.composewaifu.ui.gallery.GalleryViewModel
 
@@ -40,7 +44,7 @@ class MainActivity : ComponentActivity() {
                         val currentDestination = navBackStackEntry?.destination
                         items.forEach { screen ->
                             BottomNavigationItem(
-                                icon = { Icon(Icons.Filled.Favorite, contentDescription = null) },
+                                icon = { Icon(screen.icon, contentDescription = null) },
                                 label = { Text(stringResource(screen.resourceId)) },
                                 selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                                 onClick = {
@@ -62,6 +66,10 @@ class MainActivity : ComponentActivity() {
                         val galleryViewModel = hiltViewModel<GalleryViewModel>()
                         GalleryScreen(galleryViewModel)
                     }
+                    composable(Screen.Favorite.route) {
+                        val favoriteViewModel = hiltViewModel<FavoriteViewModel>()
+                        FavoriteScreen(favoriteViewModel)
+                    }
                 }
             }
         }
@@ -69,9 +77,11 @@ class MainActivity : ComponentActivity() {
 }
 
 val items = listOf(
-    Screen.Home
+    Screen.Home,
+    Screen.Favorite
 )
 
-sealed class Screen(val route: String, @StringRes val resourceId: Int) {
-    object Home : Screen("home", R.string.home)
+sealed class Screen(val route: String, @StringRes val resourceId: Int, val icon: ImageVector) {
+    object Home : Screen("home", R.string.home, Icons.Outlined.Home)
+    object Favorite : Screen("favorite", R.string.favorites, Icons.Outlined.FavoriteBorder)
 }

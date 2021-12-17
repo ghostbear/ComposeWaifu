@@ -69,6 +69,12 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.40.5")
     kapt("com.google.dagger:hilt-android-compiler:2.40.5")
 
+    // Database
+    val roomVersion = "2.4.0"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+
     // Ktor
     val ktorVersion = "1.6.7"
     implementation("io.ktor:ktor-client-core:$ktorVersion")
