@@ -17,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
@@ -27,8 +26,7 @@ import me.ghostbear.composewaifu.ui.components.Chips
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-fun GalleryScreen() {
-    val vm: GalleryViewModel = viewModel()
+fun GalleryScreen(vm: GalleryViewModel) {
     LaunchedEffect(vm.selectedType, vm.selectedCategory) {
         vm.loadImage()
     }

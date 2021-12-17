@@ -61,6 +61,10 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.0.5")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0")
 
+    // Navigation
+    implementation("androidx.navigation:navigation-compose:2.4.0-rc01")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0-rc01")
+
     // Hilt
     implementation("com.google.dagger:hilt-android:2.40.5")
     kapt("com.google.dagger:hilt-android-compiler:2.40.5")
@@ -83,11 +87,11 @@ dependencies {
 }
 
 tasks {
-    withType<KotlinCompile> {
-        kotlinOptions.freeCompilerArgs += listOf(
-            "-opt-in=kotlin.RequiresOptIn"
-        )
-    }
+//    withType<KotlinCompile> {
+//        kotlinOptions.freeCompilerArgs += listOf(
+//            "-opt-in=kotlin.RequiresOptIn"
+//        )
+//    }
 }
 
 kapt {
