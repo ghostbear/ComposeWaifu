@@ -1,8 +1,8 @@
 package me.ghostbear.composewaifu.remote
 
+import me.ghostbear.composewaifu.remote.model.Waifu
 import me.ghostbear.composewaifu.remote.model.WaifuCategory
 import me.ghostbear.composewaifu.remote.model.WaifuCollection
-import me.ghostbear.composewaifu.remote.model.Waifu
 import me.ghostbear.composewaifu.remote.model.WaifuType
 
 interface WaifuApi {
@@ -17,6 +17,6 @@ interface WaifuApi {
      * Get many images
      * Receive 30 unique images from a specific endpoint or category
      */
-    suspend fun getImages(type: WaifuType, category: WaifuCategory): WaifuCollection
+    suspend fun getImages(type: WaifuType, category: WaifuCategory, excludes: List<String> = emptyList()): WaifuCollection
 
 }

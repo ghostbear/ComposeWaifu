@@ -13,6 +13,9 @@ interface FavoriteDao {
     @Query("SELECT * FROM waifu")
     fun getAll(): Flow<List<Waifu>>
 
+    @Query("SELECT * FROM waifu WHERE url = :url")
+    fun findByUrl(url: String): Waifu
+
     @Insert
     fun insert(waifu: Waifu)
 

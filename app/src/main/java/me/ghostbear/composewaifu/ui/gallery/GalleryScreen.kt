@@ -10,11 +10,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
@@ -27,12 +34,9 @@ import me.ghostbear.composewaifu.ui.components.Chips
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun GalleryScreen(vm: GalleryViewModel) {
-    LaunchedEffect(vm.selectedType, vm.selectedCategory) {
-        vm.loadImage()
-    }
+    val collection by vm.collection.collectAsState(initial = emptyList())
 
     LazyColumn {
-
         item {
             Row {
                 // Type
@@ -74,9 +78,9 @@ fun GalleryScreen(vm: GalleryViewModel) {
             }
         }
 
-        items(vm.waifuCollection.files) { url ->
+        items(collection) { waifu ->
             val painter = rememberImagePainter(
-                data = url,
+                data = waifu.url,
                 builder = {
                     size(OriginalSize)
                 }
@@ -90,16 +94,41 @@ fun GalleryScreen(vm: GalleryViewModel) {
                     CircularProgressIndicator()
                 }
             } else {
-                Image(
-                    painter = painter,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            vm.addToFavorite(url)
+                val isFavorite = waifu.url in vm.favorites
+                Box {
+                    Image(
+                        painter = painter,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        contentScale = ContentScale.Crop,
+                    )
+                    IconButton(
+                        onClick = {
+                            if (isFavorite) {
+                                vm.removeFavorite(waifu)
+                            } else {
+                                vm.addFavorite(waifu)
+                            }
                         },
-                    contentScale = ContentScale.Crop,
-                )
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .align(Alignment.TopEnd)
+                    ) {
+                        if (isFavorite) {
+                            Icon(
+                                imageVector = Icons.Outlined.Favorite,
+                                contentDescription = null,
+                                tint = Color.Red
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Outlined.FavoriteBorder,
+                                contentDescription = null
+                            )
+                        }
+                    }
+                }
             }
         }
     }
