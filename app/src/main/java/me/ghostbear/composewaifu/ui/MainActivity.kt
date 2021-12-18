@@ -1,6 +1,8 @@
 package me.ghostbear.composewaifu.ui
 
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.StringRes
@@ -15,19 +17,26 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
+import java.net.URLEncoder
+import java.nio.charset.Charset
 import me.ghostbear.composewaifu.R
 import me.ghostbear.composewaifu.ui.favorites.FavoriteScreen
 import me.ghostbear.composewaifu.ui.favorites.FavoriteViewModel
 import me.ghostbear.composewaifu.ui.gallery.GalleryScreen
 import me.ghostbear.composewaifu.ui.gallery.GalleryViewModel
+import me.ghostbear.composewaifu.ui.picture.PictureScreen
+import me.ghostbear.composewaifu.ui.picture.PictureViewModel
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -64,11 +73,38 @@ class MainActivity : ComponentActivity() {
                 NavHost(navController = navController, startDestination = Screen.Home.route) {
                     composable(Screen.Home.route) {
                         val galleryViewModel = hiltViewModel<GalleryViewModel>()
-                        GalleryScreen(galleryViewModel)
+                        GalleryScreen(galleryViewModel) { url: String ->
+                            navController.navigate(
+                                "picture/${
+                                    URLEncoder.encode(
+                                        url,
+                                        Charset.defaultCharset().name()
+                                    )
+                                }"
+                            )
+                        }
                     }
                     composable(Screen.Favorite.route) {
                         val favoriteViewModel = hiltViewModel<FavoriteViewModel>()
-                        FavoriteScreen(favoriteViewModel)
+                        FavoriteScreen(favoriteViewModel) { url: String ->
+                            navController.navigate(
+                                "picture/${
+                                    URLEncoder.encode(
+                                        url,
+                                        Charset.defaultCharset().name()
+                                    )
+                                }"
+                            )
+                        }
+                    }
+                    composable(
+                        route = "picture/{waifuUrl}",
+                        arguments = listOf(navArgument("waifuUrl") { type = NavType.StringType })
+                    ) { backStackEntry ->
+                        val waifuUrl = backStackEntry.arguments?.getString("waifuUrl") as String
+                        Log.d("NavHost", waifuUrl)
+                        val pictureViewModel: PictureViewModel = hiltViewModel()
+                        PictureScreen(navController, pictureViewModel, waifuUrl)
                     }
                 }
             }

@@ -33,7 +33,7 @@ import me.ghostbear.composewaifu.ui.components.Chips
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-fun GalleryScreen(vm: GalleryViewModel) {
+fun GalleryScreen(vm: GalleryViewModel, onClickPicture: (String) -> Unit) {
     val collection by vm.collection.collectAsState(initial = emptyList())
 
     LazyColumn {
@@ -100,7 +100,8 @@ fun GalleryScreen(vm: GalleryViewModel) {
                         painter = painter,
                         contentDescription = null,
                         modifier = Modifier
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .clickable(onClick = { onClickPicture(waifu.url) }),
                         contentScale = ContentScale.Crop,
                     )
                     IconButton(

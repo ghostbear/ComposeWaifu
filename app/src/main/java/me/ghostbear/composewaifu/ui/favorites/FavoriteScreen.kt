@@ -12,10 +12,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,7 +24,7 @@ import coil.compose.rememberImagePainter
 import coil.size.OriginalSize
 
 @Composable
-fun FavoriteScreen(vm: FavoriteViewModel) {
+fun FavoriteScreen(vm: FavoriteViewModel, onClickPicture: (String) -> Unit) {
     val favorites = vm.favorites.collectAsState(initial = emptyList())
 
     LazyColumn {
@@ -52,9 +50,7 @@ fun FavoriteScreen(vm: FavoriteViewModel) {
                         contentDescription = null,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable {
-                                vm.removeFavorite(waifu)
-                            },
+                            .clickable(onClick = { onClickPicture(waifu.url) }),
                         contentScale = ContentScale.Crop,
                     )
                     IconButton(
