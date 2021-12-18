@@ -1,11 +1,12 @@
 package me.ghostbear.composewaifu.local.model
 
 import androidx.room.Entity
-import androidx.room.Index
 import androidx.room.PrimaryKey
+import java.util.*
 
-@Entity(indices = [Index(value = arrayOf("url"), unique = true)])
+@Entity
 data class Waifu(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val url: String
+    @PrimaryKey val url: String,
+    val isFavorite: Boolean = false,
+    val updatedAt: Date = Date()
 )

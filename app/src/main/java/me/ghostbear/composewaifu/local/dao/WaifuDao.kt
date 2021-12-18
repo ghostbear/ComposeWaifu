@@ -1,23 +1,32 @@
 package me.ghostbear.composewaifu.local.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import me.ghostbear.composewaifu.local.model.Waifu
 
 @Dao
-interface FavoriteDao {
+interface WaifuDao {
 
-    @Query("SELECT * FROM waifu")
-    fun getAll(): Flow<List<Waifu>>
+    @Query("SELECT * FROM waifu ORDER BY updatedAt DESC LIMIT 30")
+    fun getLatest(): Flow<List<Waifu>>
+
+    @Query("SELECT * FROM waifu WHERE isFavorite = 1")
+    fun getFavorites(): Flow<List<Waifu>>
 
     @Query("SELECT * FROM waifu WHERE url = :url")
     fun findByUrl(url: String): Waifu
 
     @Insert
     fun insert(waifu: Waifu)
+
+    @Update
+    fun update(waifu: Waifu)
 
     @Delete
     fun delete(waifu: Waifu)

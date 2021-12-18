@@ -72,6 +72,7 @@ class MainActivity : ComponentActivity() {
             ) {
                 NavHost(navController = navController, startDestination = Screen.Home.route) {
                     composable(Screen.Home.route) {
+                        Log.d("Home", "Recomposed")
                         val galleryViewModel = hiltViewModel<GalleryViewModel>()
                         GalleryScreen(galleryViewModel) { url: String ->
                             navController.navigate(

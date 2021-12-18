@@ -7,12 +7,12 @@ import me.ghostbear.composewaifu.domain.repository.WaifuRepository
 import me.ghostbear.composewaifu.remote.model.WaifuCategory
 import me.ghostbear.composewaifu.remote.model.WaifuType
 
-class GetWaifuCollection @Inject constructor(
+class UpdateWaifuPreferences @Inject constructor(
     private val repository: WaifuRepository
 ) {
 
-    fun subscribe(): Flow<List<Waifu>> {
-        return repository.getLatest()
+    fun subscribe(type: WaifuType, category: WaifuCategory): Flow<List<Waifu>> {
+        return repository.updateLatest(type, category)
     }
 
 }

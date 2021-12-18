@@ -12,6 +12,14 @@ fun RemoteWaifu.toDomain(): List<Waifu> {
     }
 }
 
+fun RemoteWaifu.toData(): List<LocalWaifu> {
+    return files.map { url ->
+        LocalWaifu(
+            url = url
+        )
+    }
+}
+
 fun LocalWaifu.toDomain(): Waifu {
     return Waifu(
         url = url

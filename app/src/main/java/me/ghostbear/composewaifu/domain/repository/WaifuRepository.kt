@@ -7,12 +7,16 @@ import me.ghostbear.composewaifu.remote.model.WaifuType
 
 interface WaifuRepository {
 
-    fun getCollection(type: WaifuType, category: WaifuCategory): Flow<List<Waifu>>
+    fun getLatest(): Flow<List<Waifu>>
 
     fun getFavorites(): Flow<List<Waifu>>
 
     suspend fun addFavorite(waifu: Waifu)
 
     suspend fun removeFavorite(waifu: Waifu)
+
+    fun updateLatest(type: WaifuType, category: WaifuCategory): Flow<List<Waifu>>
+
+    fun findByUrl(url: String): Waifu
 
 }

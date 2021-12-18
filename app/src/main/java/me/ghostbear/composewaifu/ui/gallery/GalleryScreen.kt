@@ -17,8 +17,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,7 +36,9 @@ import me.ghostbear.composewaifu.ui.components.Chips
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun GalleryScreen(vm: GalleryViewModel, onClickPicture: (String) -> Unit) {
-    val collection by vm.collection.collectAsState(initial = emptyList())
+    LaunchedEffect(vm.selectedType, vm.selectedCategory) {
+        vm.updateWaifuPreferences()
+    }
 
     LazyColumn {
         item {
@@ -78,7 +82,7 @@ fun GalleryScreen(vm: GalleryViewModel, onClickPicture: (String) -> Unit) {
             }
         }
 
-        items(collection) { waifu ->
+        items(vm.collection) { waifu ->
             val painter = rememberImagePainter(
                 data = waifu.url,
                 builder = {
@@ -132,6 +136,10 @@ fun GalleryScreen(vm: GalleryViewModel, onClickPicture: (String) -> Unit) {
                 }
             }
         }
+    }
+
+    LaunchedEffect(Unit) {
+        vm.init()
     }
 }
 

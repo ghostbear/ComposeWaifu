@@ -11,7 +11,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
-import me.ghostbear.composewaifu.local.MainDatabase
+import me.ghostbear.composewaifu.local.WaifuDatabase
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -27,10 +27,10 @@ object ApplicationModule {
     }
 
     @Provides
-    fun provideMainDatabase(@ApplicationContext context: Context): MainDatabase {
+    fun provideWaifuDatabase(@ApplicationContext context: Context): WaifuDatabase {
         return Room.databaseBuilder(
             context,
-            MainDatabase::class.java,
+            WaifuDatabase::class.java,
             "waifu-database"
         ).build()
     }
