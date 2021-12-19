@@ -13,7 +13,9 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,53 +24,71 @@ import androidx.compose.ui.unit.dp
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import coil.size.OriginalSize
+import me.ghostbear.composewaifu.ui.components.ErrorScreen
+import me.ghostbear.composewaifu.ui.components.LoadingScreen
 
 @Composable
 fun FavoriteScreen(vm: FavoriteViewModel, onClickPicture: (String) -> Unit) {
-    val favorites = vm.favorites.collectAsState(initial = emptyList())
 
-    LazyColumn {
-        items(favorites.value) { waifu ->
-            val painter = rememberImagePainter(
-                data = waifu.url,
-                builder = {
-                    size(OriginalSize)
-                }
-            )
-            val state = painter.state
-            if (state is ImagePainter.State.Loading) {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            } else {
-                Box {
-                    Image(
-                        painter = painter,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable(onClick = { onClickPicture(waifu.url) }),
-                        contentScale = ContentScale.Crop,
+    val state by vm.state.collectAsState()
+
+    when {
+        state.hasError -> {
+            ErrorScreen(exception = state.error!!)
+        }
+        state.isLoading -> {
+            LoadingScreen()
+        }
+        else -> {
+            LazyColumn {
+                items(state.favorites!!) { waifu ->
+                    val painter = rememberImagePainter(
+                        data = waifu.url,
+                        builder = {
+                            size(OriginalSize)
+                        }
                     )
-                    IconButton(
-                        onClick = {
-                            vm.removeFavorite(waifu)
-                        },
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .align(Alignment.TopEnd)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Favorite,
-                            contentDescription = null,
-                            tint = Color.Red
-                        )
+                    val state = painter.state
+                    if (state is ImagePainter.State.Loading) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    } else {
+                        Box {
+                            Image(
+                                painter = painter,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable(onClick = { onClickPicture(waifu.url) }),
+                                contentScale = ContentScale.Crop,
+                            )
+                            IconButton(
+                                onClick = {
+                                    vm.removeFavorite(waifu)
+                                },
+                                modifier = Modifier
+                                    .padding(8.dp)
+                                    .align(Alignment.TopEnd)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Favorite,
+                                    contentDescription = null,
+                                    tint = Color.Red
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
     }
+
+    LaunchedEffect(Unit) {
+        vm.getFavorites()
+    }
 }
+

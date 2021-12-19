@@ -8,8 +8,19 @@ class SaveWaifuPicture @Inject constructor(
     private val imageSaver: WaifuImageSaver
 ) {
 
-    suspend fun await(waifu: Waifu) {
-        imageSaver.save(waifu)
+    suspend fun await(waifu: Waifu): Result {
+        return try {
+            when (val result = imageSaver.save(waifu)) {
+                is WaifuImageSaver.Result.Error -> Result.Error(result.message)
+                is WaifuImageSaver.Result.Success -> Result.Success(result.filename)
+            }
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 
+    sealed class Result  {
+        data class Error(val message: Exception) : Result()
+        data class Success(val filename: String) : Result()
+    }
 }

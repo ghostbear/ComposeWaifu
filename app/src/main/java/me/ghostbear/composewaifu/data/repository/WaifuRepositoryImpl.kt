@@ -1,26 +1,9 @@
 package me.ghostbear.composewaifu.data.repository
 
-import android.util.Log
-import androidx.compose.runtime.snapshotFlow
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import me.ghostbear.composewaifu.data.mapper.toData
 import me.ghostbear.composewaifu.data.mapper.toDomain
@@ -43,18 +26,29 @@ class WaifuRepositoryImpl @Inject constructor(
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    fun Flow<List<LocalWaifu>>.transformDomain(): Flow<List<Waifu>> = transform { value ->
-        emit(value.map(LocalWaifu::toDomain))
-    }
+    override suspend fun getLatest(type: WaifuType, category: WaifuCategory): List<Waifu> {
+        val images = api.getImages(type, category)
 
-    override fun getLatest(): Flow<List<Waifu>> {
-        return dao.getLatest().transformDomain()
-    }
-
-    override fun getFavorites(): Flow<List<Waifu>> {
-        return dao.getFavorites().map { list ->
-            list.map(LocalWaifu::toDomain)
+        scope.launch {
+            images
+                .toData()
+                .forEach {
+                    try {
+                        dao.insert(it)
+                    } catch (e: Exception) {
+                        val waifu = dao
+                            .findByUrl(it.url)
+                            .copy(updatedAt = it.updatedAt)
+                        dao.update(waifu)
+                    }
+                }
         }
+
+        return images.toDomain()
+    }
+
+    override suspend fun getFavorites(): List<Waifu> {
+        return dao.getFavorites().map(LocalWaifu::toDomain)
     }
 
     override suspend fun addFavorite(waifu: Waifu) {
@@ -71,28 +65,7 @@ class WaifuRepositoryImpl @Inject constructor(
         dao.update(waifu)
     }
 
-    override fun updateLatest(type: WaifuType, category: WaifuCategory): Flow<List<Waifu>> {
-        return flow {
-            api.getImages(type, category)
-                .toData()
-                .forEach {
-                    try {
-                        dao.insert(it)
-                        Log.d("getCollection", "Inserting waifu: $it")
-                    } catch (e: Exception) {
-                        val waifu = dao
-                            .findByUrl(it.url)
-                            .copy(updatedAt = it.updatedAt)
-                        Log.d("getCollection", "Updating waifu: $waifu")
-                        dao.update(waifu)
-                    }
-                }
-
-            emitAll(dao.getLatest().transformDomain())
-        }
-    }
-
-    override fun findByUrl(url: String): Waifu {
+    override suspend fun findByUrl(url: String): Waifu {
         return dao.findByUrl(url).toDomain()
     }
 

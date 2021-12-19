@@ -1,26 +1,37 @@
 package me.ghostbear.composewaifu.ui.favorites
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import me.ghostbear.composewaifu.domain.interactor.GetWaifuFavorites
 import me.ghostbear.composewaifu.domain.interactor.RemoveWaifuFavorite
 import me.ghostbear.composewaifu.domain.model.Waifu
+import me.ghostbear.composewaifu.ui.BaseViewModel
 
 @HiltViewModel
 class FavoriteViewModel @Inject constructor(
-    getWaifuFavorites: GetWaifuFavorites,
+    favoriteViewState: FavoriteViewState,
+    private val getWaifuFavorites: GetWaifuFavorites,
     private val removeWaifuFavorite: RemoveWaifuFavorite
-) : ViewModel() {
+) : BaseViewModel<FavoriteViewState>(favoriteViewState) {
 
-    val favorites = getWaifuFavorites.subscribe()
+    fun getFavorites() {
+        setState { state ->
+            when (val result = getWaifuFavorites.await()) {
+                is GetWaifuFavorites.Result.Success -> {
+                    state.copy(favorites = result.favorites, error = null)
+                }
+                is GetWaifuFavorites.Result.Error -> {
+                    state.copy(favorites = listOf(), error = result.error)
+                }
+            }
+        }
+    }
 
     fun removeFavorite(waifu: Waifu) {
-        viewModelScope.launch(Dispatchers.IO) {
+        setState { state ->
             removeWaifuFavorite.await(waifu)
+            state.copy(favorites = state.favorites?.minus(waifu))
         }
     }
 }
+

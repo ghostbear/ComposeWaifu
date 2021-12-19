@@ -24,25 +24,27 @@ class WaifuImageSaver @Inject constructor(
             .build()
         val result = imageLoader.execute(request)
 
+        val filename = uri.pathSegments.last()
+
         val values = ContentValues()
-        values.put(MediaStore.Images.Media.TITLE, uri.pathSegments.last())
+        values.put(MediaStore.Images.Media.TITLE, filename)
         values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
 
         val filePath = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
         val outputStream = context.contentResolver.openOutputStream(filePath!!)
 
-        val drawable = result.drawable ?: return Result.Error("Failed to fetch image")
+        val drawable = result.drawable ?: return Result.Error(Exception("Failed to fetch image"))
         val bitmap = drawable.toBitmap()
 
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
         outputStream?.close()
 
-        return Result.Success
+        return Result.Success(filename)
     }
 
     sealed class Result  {
-        data class Error(val message: String) : Result()
-        object Success : Result()
+        data class Error(val message: Exception) : Result()
+        data class Success(val filename: String) : Result()
     }
 }

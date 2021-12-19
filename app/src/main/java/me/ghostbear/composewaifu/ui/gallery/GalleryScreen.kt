@@ -20,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,114 +31,128 @@ import coil.compose.rememberImagePainter
 import coil.size.OriginalSize
 import me.ghostbear.composewaifu.remote.model.WaifuType
 import me.ghostbear.composewaifu.ui.components.Chips
+import me.ghostbear.composewaifu.ui.components.ErrorScreen
+import me.ghostbear.composewaifu.ui.components.LoadingScreen
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun GalleryScreen(vm: GalleryViewModel, onClickPicture: (String) -> Unit) {
-    LaunchedEffect(vm.selectedType, vm.selectedCategory) {
-        vm.updateWaifuPreferences()
-    }
+    val state by vm.state.collectAsState()
 
-    LazyColumn {
-        item {
-            Row {
-                // Type
-                for (type in WaifuType.values()) {
-                    Chips(
-                        modifier = Modifier
-                            .clickable {
-                                vm.selectedType = type
-                                vm.selectedCategory = type.categories.first()
-                            },
-                        selected = type == vm.selectedType
-                    ) {
-                        Text(
-                            text = type.name,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
-                }
-            }
+    when {
+        state.hasError -> {
+            ErrorScreen(exception = state.error!!)
         }
-
-        item {
-            LazyRow {
-                // Categories
-                items(vm.selectedType.categories) { category ->
-                    Chips(
-                        modifier = Modifier
-                            .clickable {
-                                vm.selectedCategory = category
-                            },
-                        selected = category == vm.selectedCategory
-                    ) {
-                        Text(
-                            text = category.name,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
-                }
-            }
+        state.isLoading -> {
+            LoadingScreen()
         }
-
-        items(vm.collection) { waifu ->
-            val painter = rememberImagePainter(
-                data = waifu.url,
-                builder = {
-                    size(OriginalSize)
-                }
-            )
-            val state = painter.state
-            if (state is ImagePainter.State.Loading) {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            } else {
-                val isFavorite = waifu.url in vm.favorites
-                Box {
-                    Image(
-                        painter = painter,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable(onClick = { onClickPicture(waifu.url) }),
-                        contentScale = ContentScale.Crop,
-                    )
-                    IconButton(
-                        onClick = {
-                            if (isFavorite) {
-                                vm.removeFavorite(waifu)
-                            } else {
-                                vm.addFavorite(waifu)
+        else -> {
+            LazyColumn {
+                item {
+                    Row {
+                        // Type
+                        for (type in WaifuType.values()) {
+                            Chips(
+                                modifier = Modifier
+                                    .clickable {
+                                        vm.setType(type)
+                                    },
+                                selected = type == state.type
+                            ) {
+                                Text(
+                                    text = type.name,
+                                    modifier = Modifier.padding(8.dp)
+                                )
                             }
-                        },
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .align(Alignment.TopEnd)
-                    ) {
-                        if (isFavorite) {
-                            Icon(
-                                imageVector = Icons.Outlined.Favorite,
-                                contentDescription = null,
-                                tint = Color.Red
-                            )
-                        } else {
-                            Icon(
-                                imageVector = Icons.Outlined.FavoriteBorder,
-                                contentDescription = null
-                            )
                         }
                     }
                 }
-            }
+
+                item {
+                    LazyRow {
+                        // Categories
+                        items(state.type.categories) { category ->
+                            Chips(
+                                modifier = Modifier
+                                    .clickable {
+                                        vm.setCategory(category)
+                                    },
+                                selected = category == state.category
+                            ) {
+                                Text(
+                                    text = category.name,
+                                    modifier = Modifier.padding(8.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                items(state.waifus!!) { waifu ->
+                    val painter = rememberImagePainter(
+                        data = waifu.url,
+                        builder = {
+                            size(OriginalSize)
+                        }
+                    )
+                    val painterState = painter.state
+                    if (painterState is ImagePainter.State.Loading) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    } else {
+                        val isFavorite = waifu in state.favorites
+                        Box {
+                            Image(
+                                painter = painter,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable(onClick = { onClickPicture(waifu.url) }),
+                                contentScale = ContentScale.Crop,
+                            )
+                            IconButton(
+                                onClick = {
+                                    if (isFavorite) {
+                                        vm.removeFavorite(waifu)
+                                    } else {
+                                        vm.addFavorite(waifu)
+                                    }
+                                },
+                                modifier = Modifier
+                                    .padding(8.dp)
+                                    .align(Alignment.TopEnd)
+                            ) {
+                                if (isFavorite) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Favorite,
+                                        contentDescription = null,
+                                        tint = Color.Red
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = Icons.Outlined.FavoriteBorder,
+                                        contentDescription = null
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
         }
     }
 
+
+
+    }
+
     LaunchedEffect(Unit) {
-        vm.init()
+        if (state.waifus == null) {
+            vm.getWaifus()
+        }
     }
 }
 

@@ -8,8 +8,17 @@ class FindWaifu @Inject constructor(
     private val repository: WaifuRepository
 ) {
 
-    fun await(url: String): Waifu {
-        return repository.findByUrl(url)
+    suspend fun await(url: String): Result {
+        return try {
+            Result.Success(repository.findByUrl(url))
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    sealed class Result {
+        data class Success(val waifu: Waifu) : Result()
+        data class Error(val error: Exception) : Result()
     }
 
 }

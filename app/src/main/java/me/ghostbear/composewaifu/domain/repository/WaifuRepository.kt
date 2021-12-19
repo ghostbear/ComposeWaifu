@@ -1,22 +1,19 @@
 package me.ghostbear.composewaifu.domain.repository
 
-import kotlinx.coroutines.flow.Flow
 import me.ghostbear.composewaifu.domain.model.Waifu
 import me.ghostbear.composewaifu.remote.model.WaifuCategory
 import me.ghostbear.composewaifu.remote.model.WaifuType
 
 interface WaifuRepository {
 
-    fun getLatest(): Flow<List<Waifu>>
+    suspend fun getLatest(type: WaifuType, category: WaifuCategory): List<Waifu>
 
-    fun getFavorites(): Flow<List<Waifu>>
+    suspend fun getFavorites(): List<Waifu>
 
     suspend fun addFavorite(waifu: Waifu)
 
     suspend fun removeFavorite(waifu: Waifu)
 
-    fun updateLatest(type: WaifuType, category: WaifuCategory): Flow<List<Waifu>>
-
-    fun findByUrl(url: String): Waifu
+    suspend fun findByUrl(url: String): Waifu
 
 }

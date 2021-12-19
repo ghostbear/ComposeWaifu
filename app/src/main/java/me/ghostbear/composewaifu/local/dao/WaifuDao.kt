@@ -4,20 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import kotlinx.coroutines.flow.Flow
 import me.ghostbear.composewaifu.local.model.Waifu
 
 @Dao
 interface WaifuDao {
 
     @Query("SELECT * FROM waifu ORDER BY updatedAt DESC LIMIT 30")
-    fun getLatest(): Flow<List<Waifu>>
+    fun getLatest(): LiveData<List<Waifu>>
 
     @Query("SELECT * FROM waifu WHERE isFavorite = 1")
-    fun getFavorites(): Flow<List<Waifu>>
+    suspend fun getFavorites(): List<Waifu>
 
     @Query("SELECT * FROM waifu WHERE url = :url")
     fun findByUrl(url: String): Waifu
