@@ -22,6 +22,7 @@ import coil.compose.rememberImagePainter
 import coil.size.OriginalSize
 import me.ghostbear.composewaifu.ui.components.ErrorScreen
 import me.ghostbear.composewaifu.ui.components.LoadingScreen
+import me.ghostbear.composewaifu.ui.gallery.WaifuImage
 
 @Composable
 fun PictureScreen(
@@ -48,12 +49,6 @@ fun PictureScreen(
             LoadingScreen()
         }
         else -> {
-            val painter = rememberImagePainter(
-                data = state.waifu!!.url,
-                builder = {
-                    size(OriginalSize)
-                }
-            )
             Column {
                 TopAppBar(
                     navigationIcon = {
@@ -70,11 +65,8 @@ fun PictureScreen(
                         }
                     }
                 )
-                Image(
-                    painter = painter,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
+                WaifuImage(
+                    data = state.waifu!!.url,
                 )
             }
         }

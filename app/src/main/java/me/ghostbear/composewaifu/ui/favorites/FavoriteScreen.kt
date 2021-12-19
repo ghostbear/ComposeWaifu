@@ -3,6 +3,7 @@ package me.ghostbear.composewaifu.ui.favorites
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,6 +27,7 @@ import coil.compose.rememberImagePainter
 import coil.size.OriginalSize
 import me.ghostbear.composewaifu.ui.components.ErrorScreen
 import me.ghostbear.composewaifu.ui.components.LoadingScreen
+import me.ghostbear.composewaifu.ui.gallery.WaifuImage
 
 @Composable
 fun FavoriteScreen(vm: FavoriteViewModel, onClickPicture: (String) -> Unit) {
@@ -42,46 +44,14 @@ fun FavoriteScreen(vm: FavoriteViewModel, onClickPicture: (String) -> Unit) {
         else -> {
             LazyColumn {
                 items(state.favorites!!) { waifu ->
-                    val painter = rememberImagePainter(
+                    WaifuImage(
                         data = waifu.url,
-                        builder = {
-                            size(OriginalSize)
+                        isFavorite = true,
+                        onClickImage = { onClickPicture(waifu.url) },
+                        onClickFavorite = {
+                            vm.removeFavorite(waifu)
                         }
                     )
-                    val state = painter.state
-                    if (state is ImagePainter.State.Loading) {
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    } else {
-                        Box {
-                            Image(
-                                painter = painter,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable(onClick = { onClickPicture(waifu.url) }),
-                                contentScale = ContentScale.Crop,
-                            )
-                            IconButton(
-                                onClick = {
-                                    vm.removeFavorite(waifu)
-                                },
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .align(Alignment.TopEnd)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Favorite,
-                                    contentDescription = null,
-                                    tint = Color.Red
-                                )
-                            }
-                        }
-                    }
                 }
             }
         }
