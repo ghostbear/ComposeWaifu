@@ -4,7 +4,7 @@ import me.ghostbear.domain.waifu.model.Waifu
 
 data class FavoriteViewState(
     val favorites: List<Waifu>?,
-    val error: Exception?
+    val error: Throwable?
 ) {
 
     val hasError: Boolean

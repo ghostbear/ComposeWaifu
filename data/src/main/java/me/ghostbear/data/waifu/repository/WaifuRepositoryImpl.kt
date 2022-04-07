@@ -8,7 +8,8 @@ import kotlinx.coroutines.launch
 import me.ghostbear.data.waifu.local.WaifuDatabase
 import me.ghostbear.data.waifu.local.dao.WaifuDao
 import me.ghostbear.data.waifu.remote.WaifuApi
-import me.ghostbear.data.waifu.local.model.Waifu as DBWaifu
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import me.ghostbear.data.waifu.local.WaifuImageSaver
 import me.ghostbear.data.waifu.mapper.toLocal
 import me.ghostbear.data.waifu.mapper.toDomain
@@ -29,12 +30,12 @@ class WaifuRepositoryImpl @Inject constructor(
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    override suspend fun getLatest(type: WaifuType, category: WaifuCategory): List<Waifu> {
+    override suspend fun getLatest(type: WaifuType, category: WaifuCategory): Flow<List<Waifu>> {
         val images = api.getImages(type.toRemote(), category.toRemote())
 
         scope.launch {
             images
-                .toLocal()
+                .toLocal(type.toLocal(), category.toLocal())
                 .forEach {
                     try {
                         dao.insert(it)
@@ -47,11 +48,21 @@ class WaifuRepositoryImpl @Inject constructor(
                 }
         }
 
-        return images.toDomain()
+        return dao.getLatest()
+            .map { list ->
+                list.map {
+                    it.toDomain()
+                }
+            }
     }
 
-    override suspend fun getFavorites(): List<Waifu> {
-        return dao.getFavorites().map(DBWaifu::toDomain)
+    override fun getFavorites(): Flow<List<Waifu>> {
+        return dao.getFavorites()
+            .map { list ->
+                list.map {
+                    it.toDomain()
+                }
+            }
     }
 
     override suspend fun addFavorite(waifu: Waifu) {

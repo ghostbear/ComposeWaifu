@@ -1,5 +1,6 @@
 package me.ghostbear.domain.waifu.interactor
 
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import me.ghostbear.domain.waifu.model.Waifu
 import me.ghostbear.domain.waifu.model.WaifuCategory
@@ -10,18 +11,8 @@ class GetWaifuCollection @Inject constructor(
     private val repository: WaifuRepository
 ) {
 
-    suspend fun await(type: WaifuType, category: WaifuCategory): Result {
-        return try {
-            Result.Success(repository.getLatest(type, category))
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-
-    }
-
-    sealed class Result {
-        data class Success(val data: List<Waifu>) : Result()
-        data class Error(val error: Exception) : Result()
+    suspend fun subscribe(type: WaifuType, category: WaifuCategory): Flow<List<Waifu>> {
+        return repository.getLatest(type, category)
     }
 
 }

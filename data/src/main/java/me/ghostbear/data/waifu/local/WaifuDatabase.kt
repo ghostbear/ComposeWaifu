@@ -6,6 +6,7 @@ import androidx.room.TypeConverters
 import me.ghostbear.data.waifu.local.converter.DateConverter
 import me.ghostbear.data.waifu.local.dao.WaifuDao
 import me.ghostbear.data.waifu.local.model.Waifu
+import javax.inject.Singleton
 
 @Database(entities = [Waifu::class], version = 1)
 @TypeConverters(DateConverter::class)

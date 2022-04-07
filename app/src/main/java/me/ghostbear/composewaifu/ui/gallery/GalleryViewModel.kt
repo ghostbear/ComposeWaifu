@@ -1,10 +1,19 @@
 package me.ghostbear.composewaifu.ui.gallery
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,65 +34,45 @@ class GalleryViewModel @Inject constructor(
     private val removeWaifuFavorite: RemoveWaifuFavorite
 ) : BaseViewModel<GalleryViewState>(galleryViewState) {
 
-    private var currentJob: Job? = null
-
-    private var currentType: WaifuType? = null
-    private var currentCategory: WaifuCategory? = null
+    private var currentType: MutableStateFlow<WaifuType?> = MutableStateFlow(null)
+    private var currentCategory: MutableStateFlow<WaifuCategory?> = MutableStateFlow(null)
 
     init {
+        _state
+            .onEach { state ->
+                currentType.emit(state.type)
+                currentCategory.emit(state.category)
+            }
+            .launchIn(viewModelScope)
+
         viewModelScope.launch(Dispatchers.IO) {
-            _state.collectLatest { state ->
-                var refresh = false
-                if (state.type != currentType) {
-                    currentType = state.type
-                    refresh = true
-                }
-
-                if (state.category != currentCategory) {
-                    currentCategory = state.category
-                    refresh = true
-                }
-
-                if (refresh) {
-                    fetchWaifuList()
-                }
+            combine(currentType, currentCategory) { type, category ->
+                type to category
             }
-        }
-
-    }
-
-    fun fetchWaifuList() {
-        currentJob?.cancel()
-        currentJob = viewModelScope.launch(Dispatchers.IO) {
-            val state = _state.value
-            val result = getWaifuCollection.await(state.type, state.category)
-            _state.update { state ->
-                when (result) {
-                    is GetWaifuCollection.Result.Success -> {
-                        state.copy(waifus = result.data, favorites = listOf(), error = null)
-                    }
-                    is GetWaifuCollection.Result.Error -> {
-                        state.copy(waifus = listOf(), favorites = listOf(), error = result.error)
-                    }
+                .collectLatest { (type, category) ->
+                    if (type == null || category == null) return@collectLatest
+                    getWaifuCollection.subscribe(type, category)
+                        .drop(1)
+                        .catch { error ->
+                            _state.update { state ->
+                                state.copy(waifus = null, favorites = listOf(), error = error)
+                            }
+                        }
+                        .collectLatest {
+                            _state.update { state ->
+                                state.copy(waifus = it, favorites = listOf(), error = null)
+                            }
+                        }
                 }
-            }
         }
     }
 
-    fun addFavorite(waifu: Waifu) {
+    fun toggleFavorite(waifu: Waifu) {
         viewModelScope.launch(Dispatchers.IO) {
-            _state.update { state ->
-                addWaifuFavorite.await(waifu)
-                state.copy(favorites = state.favorites + waifu)
-            }
-        }
-    }
-
-    fun removeFavorite(waifu: Waifu) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _state.update { state ->
+            if (waifu.isFavorite) {
                 removeWaifuFavorite.await(waifu)
-                state.copy(favorites = state.favorites - waifu)
+            } else {
+                addWaifuFavorite.await(waifu)
             }
         }
     }

@@ -8,5 +8,7 @@ import java.util.*
 data class Waifu(
     @PrimaryKey val url: String,
     val isFavorite: Boolean = false,
-    val updatedAt: Date = Date()
+    val updatedAt: Date = Date(),
+    val type: WaifuType,
+    val category: WaifuCategory,
 )

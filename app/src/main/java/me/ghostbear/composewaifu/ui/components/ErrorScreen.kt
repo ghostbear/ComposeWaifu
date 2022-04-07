@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 
 @Composable
-fun ErrorScreen(exception: Exception) {
+fun ErrorScreen(exception: Throwable) {
     Box(
         modifier = Modifier
             .fillMaxSize(),

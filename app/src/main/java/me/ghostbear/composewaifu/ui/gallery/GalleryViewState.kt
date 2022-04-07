@@ -10,7 +10,7 @@ data class GalleryViewState(
     val favorites: List<Waifu>,
     val type: WaifuType,
     val category: WaifuCategory,
-    val error: Exception?
+    val error: Throwable?
 ) {
 
     val hasError: Boolean

@@ -90,17 +90,12 @@ fun GalleryScreen(vm: GalleryViewModel, onClickPicture: (String) -> Unit) {
                 }
 
                 items(state.waifus!!) { waifu ->
-                    val isFavorite = waifu in state.favorites
                     WaifuImage(
                         data = waifu.url,
-                        isFavorite = isFavorite,
+                        isFavorite = waifu.isFavorite,
                         onClickImage = { onClickPicture(waifu.url) },
                         onClickFavorite = {
-                            if (isFavorite) {
-                                vm.removeFavorite(waifu)
-                            } else {
-                                vm.addFavorite(waifu)
-                            }
+                            vm.toggleFavorite(waifu)
                         }
                     )
                 }

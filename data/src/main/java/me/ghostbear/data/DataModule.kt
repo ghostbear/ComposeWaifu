@@ -15,6 +15,7 @@ import io.ktor.client.features.json.serializer.KotlinxSerializer
 import me.ghostbear.data.waifu.local.WaifuDatabase
 import me.ghostbear.data.waifu.remote.WaifuApi
 import me.ghostbear.data.waifu.remote.WaifuApiImpl
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -26,6 +27,7 @@ abstract class DataModule {
     @Module
     @InstallIn(SingletonComponent::class)
     object Provider {
+
         @Provides
         fun provideHttpClient(): HttpClient {
             return HttpClient(CIO) {
@@ -36,6 +38,7 @@ abstract class DataModule {
         }
 
         @Provides
+        @Singleton
         fun provideWaifuDatabase(@ApplicationContext context: Context): WaifuDatabase {
             return Room.databaseBuilder(
                 context,
