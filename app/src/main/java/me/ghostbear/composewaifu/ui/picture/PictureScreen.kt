@@ -1,9 +1,7 @@
 package me.ghostbear.composewaifu.ui.picture
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.TopAppBar
@@ -14,12 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
-import coil.compose.rememberImagePainter
-import coil.size.OriginalSize
 import me.ghostbear.composewaifu.ui.components.ErrorScreen
 import me.ghostbear.composewaifu.ui.components.LoadingScreen
 import me.ghostbear.composewaifu.ui.gallery.WaifuImage

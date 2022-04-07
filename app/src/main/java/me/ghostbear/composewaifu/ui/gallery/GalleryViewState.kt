@@ -1,9 +1,9 @@
 package me.ghostbear.composewaifu.ui.gallery
 
-import me.ghostbear.composewaifu.domain.model.Waifu
-import me.ghostbear.composewaifu.remote.model.WaifuCategory
-import me.ghostbear.composewaifu.remote.model.WaifuType
-import me.ghostbear.composewaifu.ui.ViewState
+import me.ghostbear.domain.waifu.model.Waifu
+import me.ghostbear.domain.waifu.model.WaifuCategory
+import me.ghostbear.domain.waifu.model.WaifuType
+
 
 data class GalleryViewState(
     val waifus: List<Waifu>?,
@@ -11,7 +11,7 @@ data class GalleryViewState(
     val type: WaifuType,
     val category: WaifuCategory,
     val error: Exception?
-) : ViewState() {
+) {
 
     val hasError: Boolean
         get() {

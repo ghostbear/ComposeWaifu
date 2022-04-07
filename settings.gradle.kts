@@ -1,3 +1,11 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -5,5 +13,8 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
 rootProject.name = "ComposeWaifu"
 include(":app")
+include(":data")
+include(":domain")

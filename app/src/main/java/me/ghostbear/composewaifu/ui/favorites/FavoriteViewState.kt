@@ -1,12 +1,11 @@
 package me.ghostbear.composewaifu.ui.favorites
 
-import me.ghostbear.composewaifu.domain.model.Waifu
-import me.ghostbear.composewaifu.ui.ViewState
+import me.ghostbear.domain.waifu.model.Waifu
 
 data class FavoriteViewState(
     val favorites: List<Waifu>?,
     val error: Exception?
-) : ViewState() {
+) {
 
     val hasError: Boolean
         get() {

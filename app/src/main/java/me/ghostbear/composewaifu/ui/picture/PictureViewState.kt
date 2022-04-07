@@ -1,13 +1,13 @@
 package me.ghostbear.composewaifu.ui.picture
 
-import me.ghostbear.composewaifu.domain.model.Waifu
-import me.ghostbear.composewaifu.ui.ViewState
+import me.ghostbear.domain.waifu.model.Waifu
+
 
 data class PictureViewState(
     val waifu: Waifu?,
     val filename: String?,
     val error: Exception?
-) : ViewState() {
+) {
     val hasError: Boolean
         get() {
             return error != null

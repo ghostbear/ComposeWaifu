@@ -4,8 +4,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import me.ghostbear.composewaifu.data.repository.WaifuRepositoryImpl
-import me.ghostbear.composewaifu.domain.repository.WaifuRepository
+import me.ghostbear.data.waifu.repository.WaifuRepositoryImpl
+import me.ghostbear.domain.waifu.repository.WaifuRepository
 
 @Module
 @InstallIn(SingletonComponent::class)

@@ -18,7 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -31,11 +30,10 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import coil.size.OriginalSize
-import me.ghostbear.composewaifu.local.WaifuImageSaver
-import me.ghostbear.composewaifu.remote.model.WaifuType
 import me.ghostbear.composewaifu.ui.components.Chips
 import me.ghostbear.composewaifu.ui.components.ErrorScreen
 import me.ghostbear.composewaifu.ui.components.LoadingScreen
+import me.ghostbear.domain.waifu.model.WaifuType
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
@@ -107,12 +105,6 @@ fun GalleryScreen(vm: GalleryViewModel, onClickPicture: (String) -> Unit) {
                     )
                 }
             }
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        if (state.waifus == null) {
-            vm.getWaifus()
         }
     }
 }

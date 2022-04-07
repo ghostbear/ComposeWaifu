@@ -2,19 +2,19 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("com.android.application")
-    id("kotlin-android")
-    kotlin("kapt")
+    kotlin("android")
     id("dagger.hilt.android.plugin")
-    kotlin("plugin.serialization") version "1.5.31"
+    kotlin("kapt")
+
 }
 
 android {
-    compileSdk = 31
+    compileSdk = 32
 
     defaultConfig {
         applicationId = "me.ghostbear.composewaifu"
         minSdk = 21
-        targetSdk = 31
+        targetSdk = 32
         versionCode = 1
         versionName = "1.0"
 
@@ -33,7 +33,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.0.5"
+        kotlinCompilerExtensionVersion = "1.1.1"
     }
 
     compileOptions {
@@ -47,43 +47,31 @@ android {
 }
 
 dependencies {
+    implementation(project(":domain"))
+    implementation(project(":data"))
+
     implementation("androidx.core:core-ktx:1.7.0")
-    implementation("androidx.appcompat:appcompat:1.4.0")
+    implementation("androidx.appcompat:appcompat:1.4.1")
 
     // Compose
-    implementation("androidx.compose.runtime:runtime:1.0.5")
+    implementation("androidx.compose.runtime:runtime:1.1.1")
     implementation("androidx.activity:activity-compose:1.4.0")
-    implementation("androidx.compose.ui:ui:1.0.5")
-    implementation("androidx.compose.ui:ui-tooling:1.0.5")
-    implementation("androidx.compose.foundation:foundation:1.0.5")
-    implementation("androidx.compose.material:material:1.0.5")
-    implementation("androidx.compose.material:material-icons-core:1.0.5")
-    implementation("androidx.compose.material:material-icons-extended:1.0.5")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0")
-    implementation("androidx.compose.runtime:runtime-livedata:1.0.5")
+    implementation("androidx.compose.ui:ui:1.1.1")
+    implementation("androidx.compose.ui:ui-tooling:1.1.1")
+    implementation("androidx.compose.foundation:foundation:1.1.1")
+    implementation("androidx.compose.material:material:1.1.1")
+    implementation("androidx.compose.material:material-icons-core:1.1.1")
+    implementation("androidx.compose.material:material-icons-extended:1.1.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1")
+    implementation("androidx.compose.runtime:runtime-livedata:1.1.1")
 
     // Navigation
-    implementation("androidx.navigation:navigation-compose:2.4.0-rc01")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0-rc01")
+    implementation("androidx.navigation:navigation-compose:2.5.0-alpha03")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     // Hilt
-    implementation("com.google.dagger:hilt-android:2.40.5")
-    kapt("com.google.dagger:hilt-android-compiler:2.40.5")
-
-    // Database
-    val roomVersion = "2.4.0"
-    implementation("androidx.room:room-runtime:$roomVersion")
-    kapt("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
-
-    // Ktor
-    val ktorVersion = "1.6.7"
-    implementation("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-client-cio:$ktorVersion")
-
-    // Serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.1")
-    implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+    implementation("com.google.dagger:hilt-android:2.41")
+    kapt("com.google.dagger:hilt-android-compiler:2.41")
 
     // Image Loading
     implementation("io.coil-kt:coil-compose:1.4.0")
