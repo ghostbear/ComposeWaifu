@@ -77,6 +77,7 @@ dependencies {
 
     // Image Loading
     implementation("io.coil-kt:coil-compose:1.4.0")
+    implementation("io.coil-kt:coil-gif:1.4.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")

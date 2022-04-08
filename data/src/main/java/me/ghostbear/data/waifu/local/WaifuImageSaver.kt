@@ -30,7 +30,6 @@ class WaifuImageSaver @Inject constructor(
         val values = ContentValues()
         values.put(MediaStore.Images.Media.TITLE, filename)
         values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
-        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
 
         val filePath = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
         val outputStream = context.contentResolver.openOutputStream(filePath!!)
