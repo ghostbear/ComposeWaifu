@@ -19,16 +19,29 @@ class WaifuApiImpl @Inject constructor(
 ) : WaifuApi {
 
     override suspend fun getImage(type: WaifuType, category: WaifuCategory): Waifu {
-        return httpClient.get("https://api.waifu.pics/${type.name.lowercase()}/${category.name.lowercase()}")
+        return httpClient.get<Waifu>("https://api.waifu.pics/${type.name.lowercase()}/${category.name.lowercase()}").run {
+            copy(
+                type = type,
+                category = category
+            )
+        }
     }
 
-    override suspend fun getImages(type: WaifuType, category: WaifuCategory, excludes: List<String>): WaifuCollection {
-        return httpClient.post("https://api.waifu.pics/many/${type.name.lowercase()}/${category.name.lowercase()}") {
+    override suspend fun getImages(type: WaifuType, category: WaifuCategory, excludes: List<String>): List<Waifu> {
+        return httpClient.post<WaifuCollection>("https://api.waifu.pics/many/${type.name.lowercase()}/${category.name.lowercase()}") {
             contentType(ContentType.Application.Json)
             body = buildJsonObject {
                 putJsonArray("exclude") {
                     excludes.forEach { add(it) }
                 }
+            }
+        }.run {
+            files.map {
+                Waifu(
+                    url = it,
+                    type = type,
+                    category = category
+                )
             }
         }
     }

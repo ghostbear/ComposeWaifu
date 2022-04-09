@@ -37,7 +37,7 @@ class WaifuRepositoryImpl @Inject constructor(
         job?.cancel()
         job = scope.launch {
             val images = api.getImages(type.toRemote(), category.toRemote())
-                .toLocal(type.toLocal(), category.toLocal())
+                .map { it.toLocal() }
             dao.upsert(images)
         }
 

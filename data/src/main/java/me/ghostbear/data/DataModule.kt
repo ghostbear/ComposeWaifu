@@ -16,6 +16,7 @@ import me.ghostbear.data.waifu.local.WaifuDatabase
 import me.ghostbear.data.waifu.remote.WaifuApi
 import me.ghostbear.data.waifu.remote.WaifuApiImpl
 import javax.inject.Singleton
+import kotlinx.serialization.json.Json
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -32,7 +33,9 @@ abstract class DataModule {
         fun provideHttpClient(): HttpClient {
             return HttpClient(CIO) {
                 install(JsonFeature) {
-                    serializer = KotlinxSerializer()
+                    serializer = KotlinxSerializer(Json {
+                        ignoreUnknownKeys = true
+                    })
                 }
             }
         }

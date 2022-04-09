@@ -17,6 +17,6 @@ interface WaifuApi {
      * Get many images
      * Receive 30 unique images from a specific endpoint or category
      */
-    suspend fun getImages(type: WaifuType, category: WaifuCategory, excludes: List<String> = emptyList()): WaifuCollection
+    suspend fun getImages(type: WaifuType, category: WaifuCategory, excludes: List<String> = emptyList()): List<Waifu>
 
 }
